@@ -51,7 +51,7 @@ fi
 # echoes the specified field from config json
 # (property name)
 config() {
-  jq $1 ${backup_config_file} | sed 's/"//g'
+  jq $1 ${backup_config_file} | sed 's>">>g'
 }
 
 
