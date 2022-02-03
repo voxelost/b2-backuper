@@ -5,7 +5,7 @@ while getopts 'f' flag; do
   case "${flag}" in
     f) 
       apt-get -qqy update
-      apt-get -qqy install jq
+      apt-get -qqy install jq pv tar bzip2 wget sed
 
       wget -nc -P /usr/local/bin https://github.com/Backblaze/B2_Command_Line_Tool/releases/latest/download/b2-linux
       [ -f /usr/local/b2-linux ] && mv /usr/local/bin/b2-linux /usr/local/bin/b2
@@ -52,7 +52,7 @@ do
   bucket_app_key=$(config .buckets[${i}].b2_app_key)
   bucket_name=$(config .buckets[${i}].name)
 
-  b2 authorize-account ${bucket_app_key_id} ${bucket_app_key} 2> errors.log
+  b2 authorize-account ${bucket_app_key_id} ${bucket_app_key} 2>> errors.log
 
   for (( j = 0; j < $(jq '.buckets['${i}'].files | length' ${backup_config_file}); j++ )) 
   do
@@ -62,9 +62,9 @@ do
     mkdir -p ${dump_dir_path}$(dirname ${system_path})
     cp -r ${system_path} ${dump_dir_path}$(dirname ${system_path})
 
-    tar cf - ${dump_dir_path} | pv -s $(du -sb ${dump_dir_path} | awk '{print $1}') | bzip2 -9 - > ${bzipped_backup_file_path} 2> errors.log
-    b2 upload-file ${bucket_name} ${bzipped_backup_file_path} $(echo ${bucket_path} | sed "s/%d/$(date +'%d-%m-%y')/g").tar.bz2 > success.log 2> errors.log
-    rm -rf ${dump_dir_path} ${bzipped_backup_file_path} 2> errors.log
+    tar cf - ${dump_dir_path} | pv -s $(du -sb ${dump_dir_path} | awk '{print $1}') | bzip2 -9 - > ${bzipped_backup_file_path} 2>> errors.log
+    b2 upload-file ${bucket_name} ${bzipped_backup_file_path} $(echo ${bucket_path} | sed "s/%d/$(date +'%d-%m-%y')/g").tar.bz2 >> success.log 2>> errors.log
+    rm -rf ${dump_dir_path} ${bzipped_backup_file_path} 2>> errors.log
   done
 done
 
