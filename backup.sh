@@ -53,7 +53,7 @@ do
   bucket_app_key=$(config .buckets[${i}].b2_app_key)
   bucket_name=$(config .buckets[${i}].name)
 
-  # b2 authorize-account ${bucket_app_key_id} ${bucket_app_key}
+  b2 authorize-account ${bucket_app_key_id} ${bucket_app_key}
 
   for (( j = 0; j < $(jq '.buckets['${i}'].files | length' ${backup_config_file}); j++ )) 
   do
@@ -67,7 +67,6 @@ done
 
 
 tar cf - ${dump_dir_path} | pv -s $(du -sb ${dump_dir_path} | awk '{print $1}') | bzip2 -9 - > ${bzipped_backup_file_path}
-# b2 upload-file ${bucket_name} ${bzipped_backup_file_path} ${bucket_path}
+b2 upload-file ${bucket_name} ${bzipped_backup_file_path} ${bucket_path}
 
-cat ${dump_dir_path} ${bzipped_backup_file_path}
 rm -rf ${dump_dir_path} ${bzipped_backup_file_path}
