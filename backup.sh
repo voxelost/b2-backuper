@@ -8,7 +8,7 @@ while getopts 'f' flag; do
       apt-get -qqy install jq pv tar bzip2 wget sed
 
       wget -nc -P /usr/local/bin https://github.com/Backblaze/B2_Command_Line_Tool/releases/latest/download/b2-linux
-      [ -f /usr/local/b2-linux ] && mv /usr/local/bin/b2-linux /usr/local/bin/b2
+      [ -f /usr/local/bin/b2-linux ] && mv /usr/local/bin/b2-linux /usr/local/bin/b2
       [ -f /usr/local/bin/b2 ] && ln -fs /usr/local/bin/b2 /usr/bin/b2
     ;;
   esac
