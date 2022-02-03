@@ -3,14 +3,18 @@
 # fresh start
 while getopts 'f' flag; do
   case "${flag}" in
-    f) 
+    f)
       apt-get -qqy update
-      apt-get -qqy install jq pv tar bzip2 wget sed
+      apt-get -qqy install jq pv tar bzip2 wget sed cron grep
 
       wget -nc -P /usr/local/bin https://github.com/Backblaze/B2_Command_Line_Tool/releases/latest/download/b2-linux
       [ -f /usr/local/bin/b2-linux ] && chmod +x /usr/local/bin/b2-linux
       [ -f /usr/local/bin/b2-linux ] && mv /usr/local/bin/b2-linux /usr/local/bin/b2
       [ -f /usr/local/bin/b2 ] && ln -fs /usr/local/bin/b2 /usr/bin/b2
+
+      cron_command="cd $(dirname ${0}) && ${0}"
+      grep $cron_command /etc/crontab || echo "0 5 * * * ${cron_command}" >> /etc/crontab
+      /etc/init.d/cron reload
     ;;
   esac
 done
