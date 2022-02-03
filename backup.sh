@@ -1,6 +1,5 @@
 #!/bin/bash
 
-
 # fresh start
 while getopts 'f' flag; do
   case "${flag}" in
@@ -60,13 +59,13 @@ do
     system_path=$(config .buckets[${i}].files[${j}].system_path)
     bucket_path=$(config .buckets[${i}].files[${j}].bucket_path)
 
-    mkdir -p ${dump_dir_path}
+    mkdir -p ${dump_dir_path}$(dirname ${system_path})
     cp -r ${system_path} ${dump_dir_path}$(dirname ${system_path})
   done
 done
 
 
 tar cf - ${dump_dir_path} | pv -s $(du -sb ${dump_dir_path} | awk '{print $1}') | bzip2 -9 - > ${bzipped_backup_file_path}
-b2 upload-file ${bucket_name} ${bzipped_backup_file_path} ${bucket_path}
+b2 upload-file ${bucket_name} ${bzipped_backup_file_path} ${bucket_path}_$(date +"%d-%m-%y")
 
 rm -rf ${dump_dir_path} ${bzipped_backup_file_path}
