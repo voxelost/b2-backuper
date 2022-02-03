@@ -66,6 +66,6 @@ done
 
 
 tar cf - ${dump_dir_path} | pv -s $(du -sb ${dump_dir_path} | awk '{print $1}') | bzip2 -9 - > ${bzipped_backup_file_path} 2> errors.log
-b2 upload-file ${bucket_name} ${bzipped_backup_file_path} ${bucket_path}_$(date +"%d-%m-%y") 2> errors.log
+b2 upload-file ${bucket_name} ${bzipped_backup_file_path} $(echo ${bucket_path} | sed "s/%d/$(date +'%d-%m-%y')/g") 2> errors.log
 
 rm -rf ${dump_dir_path} ${bzipped_backup_file_path} 2> errors.log
