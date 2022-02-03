@@ -21,7 +21,7 @@ backup_config_file=backup_config.json
 
 if [ ! -f ${backup_config_file} ]
 then
-    echo "no config file found, an example one should look like this:"
+    echo "no config file found, an example one was created for you in current directory: ${backup_config_file}"
     echo '{
   "buckets": [
     {
@@ -36,7 +36,7 @@ then
       ]
     }
   ]
-}'
+}' > ${backup_config_file}
     exit 2
 fi
 
