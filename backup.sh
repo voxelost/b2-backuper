@@ -13,8 +13,8 @@ while getopts 'f' flag; do
       [ -f /usr/local/bin/b2 ] && ln -fs /usr/local/bin/b2 /usr/bin/b2
 
       cron_command="cd $(dirname ${0}) && ${0}"
-      grep $cron_command /etc/crontab || echo "0 5 * * * ${cron_command}" >> /etc/crontab
-      /etc/init.d/cron reload
+      grep $cron_command /etc/crontab || echo "0 5 * * * root ${cron_command}" >> /etc/crontab
+      # /etc/init.d/cron reload
     ;;
   esac
 done
