@@ -9,8 +9,8 @@ while getopts 'f' flag; do
       apt-get -qqy install jq
 
       wget -P /usr/local/bin https://github.com/Backblaze/B2_Command_Line_Tool/releases/latest/download/b2-linux
-      mv b2-linux b2
-      ln -s b2 /usr/bin/b2
+      mv /usr/local/b2-linux b2
+      ln -s /usr/local/bin/b2 /usr/bin/b2
     ;;
   esac
 done
