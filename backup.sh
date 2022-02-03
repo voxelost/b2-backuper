@@ -1,7 +1,7 @@
 #!/bin/bash
 
 file_path() {
-  readlink -f ${1} | sed "s/$(echo ${1} | sed "sx./xxg")//g"
+  readlink -f ${1} | sed "s>$(echo ${1} | sed "s<./<<g")>>g"
 }
 
 # fresh start
