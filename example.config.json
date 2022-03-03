@@ -1,0 +1,16 @@
+{
+	"buckets": [
+		{
+			"b2_app_key_id": "example",
+			"b2_app_key": "example",
+			"name": "example",
+			"cron_string": "0 0 * * *",
+			"files": [
+				{
+					"system_path": "example",
+					"bucket_path": "example"
+				}
+			]
+		}
+	]
+}
