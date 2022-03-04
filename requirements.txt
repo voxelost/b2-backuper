@@ -1,0 +1,12 @@
+arrow==1.2.2
+b2sdk==1.14.1
+certifi==2021.10.8
+charset-normalizer==2.0.12
+idna==3.3
+logfury==1.0.1
+python-dateutil==2.8.2
+requests==2.27.1
+schedule==1.1.0
+six==1.16.0
+tqdm==4.63.0
+urllib3==1.26.8
