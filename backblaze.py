@@ -1,16 +1,15 @@
-from datetime import datetime
 import os
 import tarfile
 import tempfile
 import json
 
-from apscheduler.schedulers.blocking import BlockingScheduler
+import schedule
+import asyncio
 from b2sdk.v2 import B2Api
 
 
 class BucketFile():
-    def __init__(self, cron_str: str, system_path: str, bucket_path: str) -> None:
-        self.cron_str = cron_str
+    def __init__(self, system_path: str, bucket_path: str) -> None:
         self.system_path = system_path
         self.bucket_path = f"{bucket_path.split(sep='.')[0]}.tar.bz2"
 
@@ -28,21 +27,21 @@ class BucketFile():
 
         return archive_file
 
-    def register_job(self):
+    def cron_job(self, b2_bucket):
         def backup_func():
-            print(f'job triggered, {datetime.now()}')
-            self._api_bucket.upload_local_file(
+            b2_bucket.upload_local_file(
                 local_file=self.create_archive_file(),
                 file_name=self.bucket_path
             )
+
         return backup_func
 
 
 class Bucket():
-    def __init__(self, name: str, b2_app_key_id: str, b2_app_key: str, files: list) -> None:
+    def __init__(self, name: str, b2_app_key_id: str, b2_app_key: str, backup_time: str, files: list) -> None:
         self.name = name
+        self.backup_time = backup_time
         self.bucket_files = [BucketFile(
-            cron_str=f['cron_str'],
             system_path=f['system_path'],
             bucket_path=f['bucket_path']
         ) for f in files]
@@ -54,45 +53,34 @@ class Bucket():
 
         self._api_bucket = self.b2_api.get_bucket_by_name(self.name)
 
-    def add_bucket_file(self, file: BucketFile) -> None:
-        self.bucket_files.append(file)
+        self._cron_jobs = []
 
-    def remove_bucket_file(self, file: BucketFile) -> None:
-        self.bucket_files.pop(file)
-
-    def setup_cron_jobs(self, scheduler: BlockingScheduler):
         for bucket_file in self.bucket_files:
-
-            scheduler.add_job(bucket_file.register_job(),
-                              'interval', seconds=5)
+            self._cron_jobs.append(schedule.every().day.at(self.backup_time).do(
+                bucket_file.cron_job(self._api_bucket)))
 
 
 class BackupManager():
     def __init__(self, config: dict) -> None:
         self._buckets = []
-        self.scheduler = BlockingScheduler()
-        self.scheduler.add_executor('processpool')
 
         for b in config['buckets']:
             bucket = Bucket(
                 name=b['name'],
                 b2_app_key_id=b['b2_app_key_id'],
                 b2_app_key=b['b2_app_key'],
+                backup_time=b['backup_time'],
                 files=b['files']
             )
 
-            bucket.setup_cron_jobs(self.scheduler)
             self._buckets.append(bucket)
-
-        self.scheduler.start()
 
     @classmethod
     def from_file(cls, f: str):
         with open(f, 'r') as fptr:
             return cls(json.loads(fptr.read()))
 
-    def backup_bucket_files(self, bucket: Bucket) -> None:
-        bucket.setup_backup_funcs()
-
-    def run(self) -> None:
-        print('running backblaze manager')
+    async def run(self):
+        while True:
+            schedule.run_pending()
+            await asyncio.sleep(1)
