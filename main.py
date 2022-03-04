@@ -1,19 +1,20 @@
-from backblaze import BucketFile, BackupManager
+from backblaze import BackupManager
 
+import asyncio
 import os
 
 
+async def main() -> None:
+    return
+
+
 if __name__ == '__main__':
-    print('im in main')
-    # os.environ['CONFIG_FILE_NAME'] = 'config.json'
+    event_loop = asyncio.new_event_loop()
 
     backup_manager = BackupManager.from_file(
         os.getenv('CONFIG_FILE_NAME', 'config/config.json'))
 
-    for bucket in backup_manager.buckets:
-        backup_manager.backup_bucket_files(bucket=bucket)
+    event_loop.create_task(main())
+    manager_task = event_loop.create_task(backup_manager.run())
 
-    print('exiting')
-
-    while True:
-        continue
+    event_loop.run_until_complete(manager_task)
