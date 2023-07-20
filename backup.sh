@@ -14,7 +14,7 @@ while getopts 'f' flag; do
   esac
 done
 
-dump_dir_path=dump
+dump_dir_path=archive_dump
 bzipped_backup_file_path=backup_$(date +"%d-%m-%y").tar.bz2
 backup_config_file=config.json
 
