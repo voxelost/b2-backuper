@@ -1,7 +1,7 @@
 #!/bin/bash
 
 file_path() {
-  readlink -f ${1} | sed "s/$(echo ${1} | sed 's\./\\g')//g"
+  readlink -f ${1} | sed "s/$(echo ${1} | sed "sx./xxg")//g"
 }
 
 # fresh start
@@ -72,7 +72,7 @@ do
     cp -r ${system_path} ${dump_dir_path}$(file_path ${system_path})
 
     tar cf - ${dump_dir_path} | pv -s $(du -sb ${dump_dir_path} | awk '{print $1}') | bzip2 -9 - > ${bzipped_backup_file_path} 2>> errors.log
-    b2 upload-file ${bucket_name} ${bzipped_backup_file_path} $(echo ${bucket_path} | sed "s/%d/$(date +'%d-%m-%y')/g").tar.bz2 >> success.log 2>> errors.log
+    b2 upload-file ${bucket_name} ${bzipped_backup_file_path} $(echo ${bucket_path} | sed "s/%/$(date +'%d-%m-%y')/g").tar.bz2 >> success.log 2>> errors.log
     rm -rf ${dump_dir_path} ${bzipped_backup_file_path} 2>> errors.log
   done
 done
