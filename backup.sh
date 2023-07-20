@@ -5,14 +5,14 @@ while getopts 'f' flag; do
   case "${flag}" in
     f)
       apt-get -qqy update
-      apt-get -qqy install jq pv tar bzip2 wget sed cron grep
+      apt-get -qqy install jq pv tar bzip2 wget sed cron grep readlink
 
       wget -nc -P /usr/local/bin https://github.com/Backblaze/B2_Command_Line_Tool/releases/latest/download/b2-linux
       [ -f /usr/local/bin/b2-linux ] && chmod +x /usr/local/bin/b2-linux
       [ -f /usr/local/bin/b2-linux ] && mv /usr/local/bin/b2-linux /usr/local/bin/b2
       [ -f /usr/local/bin/b2 ] && ln -fs /usr/local/bin/b2 /usr/bin/b2
 
-      cron_command="cd $(dirname ${0}) && ${0}"
+      cron_command="cd $(readlink -f ${0}) && ${0}"
       grep "${cron_command}" /etc/crontab || echo "0 5 * * * root ${cron_command}" >> /etc/crontab
       # /etc/init.d/cron reload
     ;;
@@ -64,8 +64,8 @@ do
     system_path=$(config .buckets[${i}].files[${j}].system_path)
     bucket_path=$(config .buckets[${i}].files[${j}].bucket_path)
 
-    mkdir -p ${dump_dir_path}$(dirname ${system_path})
-    cp -r ${system_path} ${dump_dir_path}$(dirname ${system_path})
+    mkdir -p ${dump_dir_path}$(readlink -f ${system_path})
+    cp -r ${system_path} ${dump_dir_path}$(readlink -f ${system_path})
 
     tar cf - ${dump_dir_path} | pv -s $(du -sb ${dump_dir_path} | awk '{print $1}') | bzip2 -9 - > ${bzipped_backup_file_path} 2>> errors.log
     b2 upload-file ${bucket_name} ${bzipped_backup_file_path} $(echo ${bucket_path} | sed "s/%d/$(date +'%d-%m-%y')/g").tar.bz2 >> success.log 2>> errors.log
