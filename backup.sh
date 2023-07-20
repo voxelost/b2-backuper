@@ -15,7 +15,7 @@ while getopts 'f' flag; do
   esac
 done
 
-dump_dir_path=${TMPDIR}dump
+dump_dir_path=${TMPDIR}dump/
 bzipped_backup_file_path=${TMPDIR}backup_$(date +"%d-%m-%y").tar.bz2
 backup_config_file=backup_config.json
 
@@ -61,7 +61,7 @@ do
     bucket_path=$(config .buckets[${i}].files[${j}].bucket_path)
 
     mkdir -p ${dump_dir_path}
-    cp -r ${system_path} ${dump_dir_path}/$(dirname ${system_path})
+    cp -r ${system_path} ${dump_dir_path}$(dirname ${system_path})
   done
 done
 
