@@ -1,6 +1,6 @@
 arrow==1.2.2
 b2sdk==1.14.1
-certifi==2021.10.8
+certifi==2022.12.7
 charset-normalizer==2.0.12
 idna==3.3
 logfury==1.0.1
