@@ -1,14 +1,20 @@
 #!/bin/bash
 
-# if jq is not yet present on the system
-# apt-get -qqy update
-# apt-get -qqy install jq
 
-#if backblaze tool is not yet present on the system
+# fresh start
+while getopts 'f' flag; do
+  case "${flag}" in
+    f) 
+      apt-get -qqy update
+      apt-get -qqy install jq
 
-# wget https://github.com/Backblaze/B2_Command_Line_Tool/releases/latest/download/b2-linux; \
-# mv b2-linux b2; \
-# ln -s b2 /usr/bin/b2
+      wget https://github.com/Backblaze/B2_Command_Line_Tool/releases/latest/download/b2-linux
+      mv b2-linux b2
+      ln -s b2 /usr/bin/b2
+    ;;
+  esac
+done
+
 dump_dir_path=${TMPDIR}dump
 bzipped_backup_file_path=${TMPDIR}backup_$(date +"%d-%m-%y").tar.bz2
 backup_config_file=backup_config.json
