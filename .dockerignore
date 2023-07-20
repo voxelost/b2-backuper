@@ -1,0 +1,7 @@
+README.md
+example.config.json
+docker-compose.yml
+Dockerfile
+.gitignore
+.dockerignore
+venv
