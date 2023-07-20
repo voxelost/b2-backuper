@@ -4,11 +4,11 @@
 			"b2_app_key_id": "example",
 			"b2_app_key": "example",
 			"name": "example",
+			"backup_time": "0:00",
 			"files": [
 				{
-					"cron_str": "0 0 * * *",
-					"system_path": "example",
-					"bucket_path": "example"
+					"system_path": "/path/to/files",
+					"bucket_path": "/bucket/path"
 				}
 			]
 		}
