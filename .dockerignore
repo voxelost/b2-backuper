@@ -1,7 +1,5 @@
 README.md
-example.config.json
-docker-compose.yml
+example.*
 Dockerfile
 .gitignore
 .dockerignore
-venv
