@@ -1,18 +1,39 @@
 import json
 
 
-class File():
-    def __init__(self, system_path: str, bucket_path: str) -> None:
+class BucketFile():
+    def __init__(self, name: str, cron_str: str, b2_argument: str, system_path: str, bucket_path: str) -> None:
+        self.name = name
+        self.cron_str = cron_str
+        self.b2_argument = b2_argument
         self.system_path = system_path
         self.bucket_path = bucket_path
 
     @classmethod
     def from_dict(cls, d: dict) -> None:
-        return cls(system_path=d.get('system_path', ''),
-                   bucket_path=d.get('bucket_path', ''))
+        return cls(
+            name=d.get('name', ''),
+            cron_str=d.get('cron_str', ''),
+            b2_argument=d.get('b2_argument', 'upload_file'),
+            system_path=d.get('system_path', ''),
+            bucket_path=d.get('bucket_path', '')
+        )
+
+    @classmethod
+    def from_bucket_file(cls, bucket_file):
+        return cls(
+            name=bucket_file.name,
+            cron_str=bucket_file.cron_str,
+            b2_argument=bucket_file.b2_argument,
+            system_path=bucket_file.system_path,
+            bucket_path=bucket_file.bucket_path
+        )
 
     def to_dict(self) -> dict:
         return {
+            'name': self.name,
+            'cron_str': self.cron_str,
+            'b2_argument': self.b2_argument,
             'system_path': self.system_path,
             'bucket_path': self.bucket_path
         }
@@ -22,26 +43,21 @@ class File():
 
 
 class Bucket():
-    def __init__(self, b2_app_key_id: str, b2_app_key: str, cron_string: str, name: str, files: list) -> None:
+    def __init__(self, b2_app_key_id: str, b2_app_key: str, files: list) -> None:
         self.b2_app_key_id = b2_app_key_id
         self.b2_app_key = b2_app_key
-        self.name = name
         self.files = files
 
     @classmethod
     def from_dict(cls, d: dict) -> None:
         return cls(b2_app_key_id=d.get('b2_app_key_id', ''),
                    b2_app_key=d.get('b2_app_key', ''),
-                   cron_string=d.get('cron_string', ''),
-                   name=d.get('name', ''),
-                   files=[File.from_dict(f) for f in d.get('files', [])])
+                   files=[BucketFile.from_dict(f) for f in d.get('files', [])])
 
     def to_dict(self) -> dict:
         return {
-            'cron_string': self.cron_string,
             'b2_app_key_id': self.b2_app_key_id,
             'b2_app_key': self.b2_app_key,
-            'name': self.name,
             'files': [f.to_dict() for f in self.files]
         }
 
@@ -64,7 +80,7 @@ class Config():
 
     def to_dict(self) -> dict:
         return {
-            'buckets': self.buckets
+            'buckets': [b.to_dict() for b in self.buckets]
         }
 
     def __str__(self) -> str:
