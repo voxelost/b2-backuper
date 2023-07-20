@@ -7,6 +7,6 @@ COPY . ./
 RUN mkdir -p config
 RUN mv config.json /app/config
 
-RUN pip install b2sdk
+RUN pip install -r requirements.txt
 
 ENTRYPOINT [ "python3", "main.py" ]
